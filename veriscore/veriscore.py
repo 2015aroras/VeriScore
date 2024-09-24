@@ -106,6 +106,8 @@ class VeriScorer(object):
                 extracted_claims.append(output_dict)
 
         print(f"claim extraction is done! saved to {output_path}")
+        del self.claim_extractor
+        self.claim_extractor = None
 
         output_file = f"evidence_{input_file_name}.jsonl"
         output_path = os.path.join(self.output_dir, output_file)
@@ -174,6 +176,9 @@ class VeriScorer(object):
                 model_domain_triplet_dict[domain][model_name].append(triplet)
 
         print(f"claim verification is done! saved to {output_path}")
+        del self.claim_verifier
+        self.claim_verifier = None
+
         utils.get_veriscore(model_domain_triplet_dict)
         print(f"Total cost: {total_prompt_tok_cnt * 10 / 1e6 + total_resp_tok_cnt * 30 / 1e6}")
 
