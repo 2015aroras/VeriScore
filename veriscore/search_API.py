@@ -1,5 +1,6 @@
 import os
 from ast import literal_eval
+from pathlib import Path
 import pdb
 import json
 import requests
@@ -73,6 +74,7 @@ class SearchAPI():
         for k, v in cache:
             self.cache_dict[k] = v
         print(f"Saving search cache ...")
+        Path(self.cache_file).parent.mkdir(parents=True, exist_ok=True)
         with open(self.cache_file, "w") as f:
             json.dump(self.cache_dict, f, indent=4)
 
