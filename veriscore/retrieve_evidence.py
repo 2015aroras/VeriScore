@@ -1,7 +1,5 @@
 import os
-import pdb
 import json
-import random
 import argparse
 from tqdm import tqdm
 from .search_API import SearchAPI

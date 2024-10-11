@@ -1,9 +1,6 @@
 import os
 import regex
-import pdb
-import json
 import spacy
-from tqdm import tqdm
 from .get_response import GetResponse
 
 
@@ -24,7 +21,7 @@ class ClaimExtractor():
         else:
             cache_dir = os.path.join(cache_dir, model_name)
             os.makedirs(cache_dir, exist_ok=True)
-            self.cache_file = os.path.join(cache_dir, f"claim_extraction_cache.json")
+            self.cache_file = os.path.join(cache_dir, "claim_extraction_cache.json")
             self.get_model_response = GetResponse(cache_file=self.cache_file,
                                                   model_name=model_name,
                                                   max_tokens=1000,
@@ -95,7 +92,7 @@ class ClaimExtractor():
                 fact_lst.append(fact.strip())
             fact_lst_lst.append(fact_lst)
 
-        print(f"Returning facts and token counts for the whole response ...")
+        print("Returning facts and token counts for the whole response ...")
         return snippet_lst, fact_lst_lst, all_facts_lst, prompt_tok_cnt, response_tok_cnt
 
     def qa_scanner_extractor(self, question, response, cost_estimate_only=False):
@@ -150,7 +147,7 @@ class ClaimExtractor():
                     all_facts_lst.append(fact.strip())
                 fact_lst.append(fact.strip())
             fact_lst_lst.append(fact_lst)
-        print(f"Returning facts and token counts for the whole response ...")
+        print("Returning facts and token counts for the whole response ...")
 
         return snippet_lst, fact_lst_lst, all_facts_lst, prompt_tok_cnt, response_tok_cnt
 

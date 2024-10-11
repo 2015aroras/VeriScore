@@ -1,6 +1,8 @@
 # get K median and K max
 from collections import defaultdict
 
+import pandas as pd
+
 def get_stats(domain_model_triplet_dict):
     domain_K_dict = defaultdict(lambda: defaultdict(int))
     for domain, model_triplet_dict in domain_model_triplet_dict.items():
@@ -19,6 +21,8 @@ def get_stats(domain_model_triplet_dict):
     return domain_K_dict
 
 def get_avg_numbers(domain_model_triplet_dict, domain_K_dict):
+    model_domain_score_dict = defaultdict(lambda: defaultdict(float))
+
     for domain, model_triplet_dict in domain_model_triplet_dict.items():
         K_median = domain_K_dict[domain]["K_median"]
         K_max = domain_K_dict[domain]["K_max"]
@@ -31,8 +35,8 @@ def get_avg_numbers(domain_model_triplet_dict, domain_K_dict):
             sent_len_lst = [x[2] for x in triplet_lst]
             sup_lst = [x[0] for x in triplet_lst]
             uns_lst = [x[1] - x[0] for x in triplet_lst]
-            prec_lst = [x[0] / x[1] for x in triplet_lst]
-            rec_med_lst = [min(x[0] / K_median, 1) for x in triplet_lst]
+            prec_lst = [x[0] / (x[1] or 1) for x in triplet_lst]
+            rec_med_lst = [min(x[0] / (K_median or 1), 1) for x in triplet_lst]
             rec_max_lst = [min(x[0] / K_max, 1) for x in triplet_lst]
 
             # get f1@K median and f1@K max
@@ -54,8 +58,12 @@ def get_avg_numbers(domain_model_triplet_dict, domain_K_dict):
 
             F1_at_median_lst.append(100*round(F1_med, 3))
 
-            print(f"[{domain}-{model_name}] \nF1@k median: {F1_med:.3f}, F1@k max: {F1_max:.3f}")
+            model_domain_score_dict[domain][model_name] = F1_med
+
+            print(f"[{domain}-{model_name}] \nk median: {K_median}, F1@k median: {F1_med:.3f}, F1@k max: {F1_max:.3f}")
+
+    return pd.DataFrame(model_domain_score_dict)
 
 def get_veriscore(domain_model_triplet_dict):
-     domain_K_dict= get_stats(domain_model_triplet_dict)
-     get_avg_numbers(domain_model_triplet_dict, domain_K_dict)
+    domain_K_dict = get_stats(domain_model_triplet_dict)
+    return get_avg_numbers(domain_model_triplet_dict, domain_K_dict), domain_K_dict
